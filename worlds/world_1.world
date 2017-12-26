@@ -1,3 +1,4 @@
+<?xml version="1.0" ?>
 <sdf version='1.6'>
   <world name='default'>
     <light name='sun' type='directional'>
@@ -279,6 +280,13 @@
       <pose frame=''>0.5 0 0 0 -0 0</pose>
       <static>1</static>
       <link name='body'>
+        <collision name="collision">
+          <geometry>
+            <mesh>
+              <uri>model://box_1.dae</uri>
+            </mesh>
+          </geometry>
+        </collision>
         <visual name='visual'>
           <geometry>
             <mesh>
@@ -294,6 +302,13 @@
       <pose frame=''>1 0 0 0 -0 0</pose>
       <static>1</static>
       <link name='body'>
+        <collision name="collision">
+          <geometry>
+            <mesh>
+              <uri>model://box_2.dae</uri>
+            </mesh>
+          </geometry>
+        </collision>
         <visual name='visual'>
           <geometry>
             <mesh>
@@ -309,6 +324,13 @@
       <pose frame=''>1.5 0 0 0 -0 0</pose>
       <static>1</static>
       <link name='body'>
+        <collision name="collision">
+          <geometry>
+            <mesh>
+              <uri>model://box_3.dae</uri>
+            </mesh>
+          </geometry>
+        </collision>
         <visual name='visual'>
           <geometry>
             <mesh>
@@ -324,6 +346,13 @@
       <pose frame=''>1.5 0 0 0 -0 0</pose>
       <static>1</static>
       <link name='body'>
+        <collision name="collision">
+          <geometry>
+            <mesh>
+              <uri>model://box_4.dae</uri>
+            </mesh>
+          </geometry>
+        </collision>
         <visual name='visual'>
           <geometry>
             <mesh>
@@ -339,6 +368,13 @@
       <pose frame=''>0.850149 -1.03735 0 0 0 -0.846446</pose>
       <static>1</static>
       <link name='body'>
+        <collision name="collision">
+          <geometry>
+            <mesh>
+              <uri>model://box_3.dae</uri>
+            </mesh>
+          </geometry>
+        </collision>
         <visual name='visual'>
           <geometry>
             <mesh>
