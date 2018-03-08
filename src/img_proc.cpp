@@ -3,28 +3,29 @@ using namespace cv;
 using namespace cv::xfeatures2d;
 
 
-int findPic(imageTransporter imgTransport, vector<cv::Mat> imgs_track){
-	cv::namedWindow("view");
-  	int foundPic;
+int findPic(imageTransporter& imgTransport, vector<cv::Mat>& imgs_track){
+  cv::namedWindow("view");
+  int foundPic;
   
-  	cv::Mat video;
+  cv::Mat video;
 
 	video = imgTransport.getImg();  
-  	if(!video.empty()){
-		//fill with your code
-	  
+  if(!video.empty()){
+	  //fill with your code
+	  //feature2D_homography("/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics/tag1.jpg", "/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics/tag3.jpg");
+    feature2D_homography(imgs_track.at(1), video);
 		cv::imshow("view", video);
 		video.release();
   	}
-  
+    cv::waitKey(10);
   	return foundPic;
 }
 
 /** @function main */
-int feature2D_homography (const char *image1, const char *image2 )
+int feature2D_homography (cv::Mat img_object, cv::Mat img_scene )//(const char *image1, const char *image2 )
 {
-  Mat img_object = imread( image1, IMREAD_GRAYSCALE );
-  Mat img_scene = imread( image2, IMREAD_GRAYSCALE );
+  //Mat img_object = imread( image1, IMREAD_GRAYSCALE );
+  //Mat img_scene = imread( image2, IMREAD_GRAYSCALE );
 
   if( !img_object.data || !img_scene.data )
   { std::cout<< " --(!) Error reading images " << std::endl; return -1; }
@@ -32,33 +33,33 @@ int feature2D_homography (const char *image1, const char *image2 )
   //-- Step 1: Detect the keypoints using SURF Detector
   int minHessian = 400;
 
-  printf("REACH 1\n");
+  // printf("REACH 1\n");
 
 //   SurfFeatureDetector detector( minHessian ); 
   Ptr<SURF> detector = SURF::create( minHessian );
   
-  printf("REACH 2\n");
+  // printf("REACH 2\n");
   std::vector<KeyPoint> keypoints_object, keypoints_scene;
 
   detector->detect( img_object, keypoints_object );
   detector->detect( img_scene, keypoints_scene );
-  printf("REACH 3\n");
+  // printf("REACH 3\n");
 
   //-- Step 2: Calculate descriptors (feature vectors)
   Ptr<SurfDescriptorExtractor> extractor = SURF::create();
-  printf("REACH 4\n");
+  // printf("REACH 4\n");
 
   Mat descriptors_object, descriptors_scene;
 
   extractor->compute( img_object, keypoints_object, descriptors_object );
   extractor->compute( img_scene, keypoints_scene, descriptors_scene );
-  printf("REACH 5\n");
+  // printf("REACH 5\n");
 
   //-- Step 3: Matching descriptor vectors using FLANN matcher
   FlannBasedMatcher matcher;
   std::vector< DMatch > matches;
   matcher.match( descriptors_object, descriptors_scene, matches );
-  printf("REACH 6\n");
+  // printf("REACH 6\n");
 
   double max_dist = 0; double min_dist = 100;
 
@@ -107,7 +108,7 @@ int feature2D_homography (const char *image1, const char *image2 )
   perspectiveTransform( obj_corners, scene_corners, H);
 
   //-- Draw lines between the corners (the mapped object in the scene - image_2 )
-  line( img_matches, scene_corners[0] + Point2f( img_object.cols, 0), scene_corners[1] + Point2f( img_object.cols, 0), Scalar(0, 255, 0), 4 );
+  line( img_matches, scene_corners[0] + Point2f( img_object.cols, 0), scene_corners[1] + Point2f( img_object.cols, 0), Scalar( 0, 255, 0), 4 );
   line( img_matches, scene_corners[1] + Point2f( img_object.cols, 0), scene_corners[2] + Point2f( img_object.cols, 0), Scalar( 0, 255, 0), 4 );
   line( img_matches, scene_corners[2] + Point2f( img_object.cols, 0), scene_corners[3] + Point2f( img_object.cols, 0), Scalar( 0, 255, 0), 4 );
   line( img_matches, scene_corners[3] + Point2f( img_object.cols, 0), scene_corners[0] + Point2f( img_object.cols, 0), Scalar( 0, 255, 0), 4 );
@@ -115,7 +116,7 @@ int feature2D_homography (const char *image1, const char *image2 )
   //-- Show detected matches
   imshow( "Good Matches & Object detection", img_matches );
 
-  waitKey(0);
+  waitKey(10);
   return 0;
   }
 

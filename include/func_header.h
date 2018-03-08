@@ -8,7 +8,7 @@ using namespace std;
 
 bool init(vector<vector<float> >& coord, std::vector<cv::Mat>& imgs_track);
 
-int findPic(imageTransporter imgTransport, vector<cv::Mat> imgs_track);
-int feature2D_homography (const char *image1, const char *image2 );
+int findPic(imageTransporter &imgTransport, vector<cv::Mat> &imgs_track);
+int feature2D_homography(cv::Mat img_object, cv::Mat img_scene );
 
 #endif

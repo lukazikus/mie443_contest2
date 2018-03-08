@@ -71,28 +71,29 @@ int main(int argc, char** argv){
 	ros::Subscriber amclSub = n.subscribe("/amcl_pose", 1, poseCallback);
 	
 	vector<vector<float> > coord;
-	vector<cv::Mat> imgs_track;	
+	vector<cv::Mat> imgs_track;	// Three images we want to match to
 	if(!init(coord, imgs_track)) return 0;
 
 	for(int i = 0; i < coord.size(); ++i){
 		cout << i << " x: " << coord[i][0] << " y: " << coord[i][1] << " z: " << coord[i][2] << endl;
 	}
 	
-	imageTransporter imgTransport("camera/image/", sensor_msgs::image_encodings::BGR8); // Andrew: For Webcam
-	findPic(imgTransport, imgs_track);
+	imageTransporter imgTransport("camera/image/", sensor_msgs::image_encodings::BGR8); // For Webcam
 	//imageTransporter imgTransport("camera/image/", sensor_msgs::image_encodings::BGR8); // THIS LINE MAY BE WRONG< CHECK MANUAL For Kinect
 
-	feature2D_homography("/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics/tag1.jpg", "/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics//tag3.jpg");
+	
 
-	// while(ros::ok()){
-	// 	ros::spinOnce();
+	while(ros::ok()){
+		ros::spinOnce();
   	// 	//.....**E-STOP DO NOT TOUCH**.......
    	// 	eStop.block();
 	// 	//...................................
 
 	// 	//fill with your code
 	// 	//moveToGoal(	-3.518, 2.511, -0.73);
-	// 	findPic(imgTransport, imgs_track);
-	// }
+		printf("REACH1\n");
+		findPic(imgTransport, imgs_track);
+		printf("REACH2\n");
+	}
 	return 0;
 }
