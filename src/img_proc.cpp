@@ -2,6 +2,7 @@
 
 using namespace cv::xfeatures2d;
 
+
 int findPic(imageTransporter imgTransport, vector<cv::Mat> imgs_track){
 	cv::namedWindow("view");
   	int foundPic;

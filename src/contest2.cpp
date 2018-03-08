@@ -77,8 +77,9 @@ int main(int argc, char** argv){
 	for(int i = 0; i < coord.size(); ++i){
 		cout << i << " x: " << coord[i][0] << " y: " << coord[i][1] << " z: " << coord[i][2] << endl;
 	}
-
-	imageTransporter imgTransport("camera/image/", sensor_msgs::image_encodings::BGR8); // For Kinect
+	
+	imageTransporter imgTransport("camera/image/", sensor_msgs::image_encodings::BGR8); // Andrew: For Webcam
+	//imageTransporter imgTransport("camera/image/", sensor_msgs::image_encodings::BGR8); // THIS LINE MAY BE WRONG< CHECK MANUAL For Kinect
 
 	while(ros::ok()){
 		ros::spinOnce();
@@ -87,7 +88,8 @@ int main(int argc, char** argv){
 		//...................................
 
 		//fill with your code
-		moveToGoal(	-3.518, 2.511, -0.73);
+		//moveToGoal(	-3.518, 2.511, -0.73);
+		findPic(imgTransport, imgs_track);
 	}
 	return 0;
 }
