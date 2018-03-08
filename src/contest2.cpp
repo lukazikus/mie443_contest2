@@ -79,17 +79,20 @@ int main(int argc, char** argv){
 	}
 	
 	imageTransporter imgTransport("camera/image/", sensor_msgs::image_encodings::BGR8); // Andrew: For Webcam
+	findPic(imgTransport, imgs_track);
 	//imageTransporter imgTransport("camera/image/", sensor_msgs::image_encodings::BGR8); // THIS LINE MAY BE WRONG< CHECK MANUAL For Kinect
 
-	while(ros::ok()){
-		ros::spinOnce();
-  		//.....**E-STOP DO NOT TOUCH**.......
-   		eStop.block();
-		//...................................
+	feature2D_homography("/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics/tag1.jpg", "/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics//tag3.jpg");
 
-		//fill with your code
-		//moveToGoal(	-3.518, 2.511, -0.73);
-		findPic(imgTransport, imgs_track);
-	}
+	// while(ros::ok()){
+	// 	ros::spinOnce();
+  	// 	//.....**E-STOP DO NOT TOUCH**.......
+   	// 	eStop.block();
+	// 	//...................................
+
+	// 	//fill with your code
+	// 	//moveToGoal(	-3.518, 2.511, -0.73);
+	// 	findPic(imgTransport, imgs_track);
+	// }
 	return 0;
 }

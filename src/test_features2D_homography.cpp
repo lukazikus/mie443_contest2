@@ -1,30 +1,26 @@
-#include "func_header.h"
+#include <stdio.h>
+#include <iostream>
+#include "opencv2/core.hpp"
+#include "opencv2/features2d.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/calib3d.hpp"
+#include "opencv2/xfeatures2d.hpp"
+
 using namespace cv;
 using namespace cv::xfeatures2d;
 
-
-int findPic(imageTransporter imgTransport, vector<cv::Mat> imgs_track){
-	cv::namedWindow("view");
-  	int foundPic;
-  
-  	cv::Mat video;
-
-	video = imgTransport.getImg();  
-  	if(!video.empty()){
-		//fill with your code
-	  
-		cv::imshow("view", video);
-		video.release();
-  	}
-  
-  	return foundPic;
-}
+void readme();
 
 /** @function main */
-int feature2D_homography (const char *image1, const char *image2 )
+int main( int argc, char** argv )
 {
-  Mat img_object = imread( image1, IMREAD_GRAYSCALE );
-  Mat img_scene = imread( image2, IMREAD_GRAYSCALE );
+  if( argc != 3 )
+  { readme(); return -1; }
+  char[20] object_imgName = "../pics/tag1.jpg";
+  char[20] scene_imgName = "../pics/tag1.jpg";
+
+  Mat img_object = imread( object_imgName, IMREAD_GRAYSCALE );
+  Mat img_scene = imread( scene_imgName, IMREAD_GRAYSCALE );
 
   if( !img_object.data || !img_scene.data )
   { std::cout<< " --(!) Error reading images " << std::endl; return -1; }
@@ -32,33 +28,25 @@ int feature2D_homography (const char *image1, const char *image2 )
   //-- Step 1: Detect the keypoints using SURF Detector
   int minHessian = 400;
 
-  printf("REACH 1\n");
+  SurfFeatureDetector detector( minHessian );
 
-//   SurfFeatureDetector detector( minHessian ); 
-  Ptr<SURF> detector = SURF::create( minHessian );
-  
-  printf("REACH 2\n");
   std::vector<KeyPoint> keypoints_object, keypoints_scene;
 
-  detector->detect( img_object, keypoints_object );
-  detector->detect( img_scene, keypoints_scene );
-  printf("REACH 3\n");
+  detector.detect( img_object, keypoints_object );
+  detector.detect( img_scene, keypoints_scene );
 
   //-- Step 2: Calculate descriptors (feature vectors)
-  Ptr<SurfDescriptorExtractor> extractor = SURF::create();
-  printf("REACH 4\n");
+  SurfDescriptorExtractor extractor;
 
   Mat descriptors_object, descriptors_scene;
 
-  extractor->compute( img_object, keypoints_object, descriptors_object );
-  extractor->compute( img_scene, keypoints_scene, descriptors_scene );
-  printf("REACH 5\n");
+  extractor.compute( img_object, keypoints_object, descriptors_object );
+  extractor.compute( img_scene, keypoints_scene, descriptors_scene );
 
   //-- Step 3: Matching descriptor vectors using FLANN matcher
   FlannBasedMatcher matcher;
   std::vector< DMatch > matches;
   matcher.match( descriptors_object, descriptors_scene, matches );
-  printf("REACH 6\n");
 
   double max_dist = 0; double min_dist = 100;
 
