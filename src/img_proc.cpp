@@ -1,23 +1,47 @@
 #include "func_header.h"
+#include <string>
+#include <unistd.h>
 using namespace cv;
 using namespace cv::xfeatures2d;
 
+#include <sstream>
 
-int findPic(imageTransporter& imgTransport, vector<cv::Mat>& imgs_track){
+namespace patch
+{
+    template < typename T > std::string to_string( const T& n )
+    {
+        std::ostringstream stm ;
+        stm << n ;
+        return stm.str() ;
+    }
+}
+
+
+int findPic(imageTransporter& imgTransport, vector<cv::Mat>& imgs_track, int iteration){
   cv::namedWindow("view");
   int foundPic;
-  
+  // char imgname[50];
+  printf("Check error 1\n");
   cv::Mat video;
 
-	video = imgTransport.getImg();  
+  video = imgTransport.getImg();
+  printf("Check error 2\n");  
   if(!video.empty()){
+    printf("Check error 3\n");
 	  //fill with your code
 	  //feature2D_homography("/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics/tag1.jpg", "/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics/tag3.jpg");
-    feature2D_homography(imgs_track.at(1), video);
-		cv::imshow("view", video);
-		video.release();
-  	}
+    // feature2D_homography(imgs_track.at(1), video);
+    cv::imshow("view", video);
+    // sprintf(imgname, "/home/turtlebot/catkin_ws/src/mie443_contest2/src/tag%d.jpg", iteration);
+    printf("Check error 4\n");
+    cv::imwrite("/home/turtlebot/catkin_ws/src/mie443_contest2/src/tag"+ patch::to_string(iteration) +".jpg", video);
     cv::waitKey(10);
+    video.release();
+    cv::waitKey(10);
+    }
+    printf("Check error 5\n");
+    printf("Check error 6\n");
+    foundPic = 0;
   	return foundPic;
 }
 

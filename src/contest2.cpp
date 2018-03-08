@@ -2,6 +2,7 @@
 #include <actionlib/client/simple_action_client.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <func_header.h>
+#include <math.h>
 
 #include <eStop.h>
 
@@ -19,7 +20,6 @@ void poseCallback(const geometry_msgs::PoseWithCovarianceStamped& msg){
 
 //-------------------------move robot function---------------
 bool moveToGoal(float xGoal, float yGoal, float phiGoal){
-
 	//define a client for to send goal requests to the move_base server through a SimpleActionClient
 	actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> ac("move_base", true);
 
@@ -61,6 +61,54 @@ bool moveToGoal(float xGoal, float yGoal, float phiGoal){
 
 }
 
+int nearest_n (std::vector<std::vector<float> > path, int n){ //finds which x-y pair is closest and returns index
+	
+	float length = 0, min_l = 0;
+	int i, min_index = 0;
+
+	for(i=0; i<n; i++){
+		length = sqrt(pow((path[i][0]-path[n][0]),2) + pow((path[i][1]-path[n][1]),2)); //sqrt((x-x_last)^2 + (y-y_last)^2);
+		if(i==0){
+			min_l = length;
+			min_index = i;
+		}
+		if(length<min_l){
+			min_l = length;
+			min_index = i;
+		}
+	}
+	return min_index;
+}
+
+std::vector<std::vector<float> > find_path (std::vector<std::vector<float> > coordinates){ //takes coordinate list and creates a new, ordered list
+	
+	int i,j, next_index;
+	float temp_x, temp_y, temp_z;//make copy of the coordinate array to modify
+
+	std::vector<std::vector<float> > path (6, std::vector<float>(3,0));
+	path[0][0] = 1;
+
+	for (i=0; i<6; i++){
+		for(j=0; j<3; j++){
+			path[i][j] = coordinates[i][j];
+		}
+	}
+
+	for(i=5; i>0; i--){
+		next_index = nearest_n(path, i);//returns index of nearest neighbor to path(i)
+		//now swap pairs to order them
+		temp_x = path[i-1][0];
+		temp_y = path[i-1][1];
+		temp_z = path[i-1][2];
+		path[i-1][0] = path[next_index][0];
+		path[i-1][1] = path[next_index][1];
+		path[i-1][2] = path[next_index][2];
+		path[next_index][0] = temp_x;
+		path[next_index][1] = temp_y;
+		path[next_index][2] = temp_z;
+	}
+	return path;
+}	
 
 int main(int argc, char** argv){
 	ros::init(argc, argv, "map_navigation_node");
@@ -72,28 +120,72 @@ int main(int argc, char** argv){
 	
 	vector<vector<float> > coord;
 	vector<cv::Mat> imgs_track;	// Three images we want to match to
+	float BlockDist = 0.8;
+
 	if(!init(coord, imgs_track)) return 0;
 
 	for(int i = 0; i < coord.size(); ++i){
+		coord[i][0] = round((coord[i][0] + BlockDist * cos(coord[i][2]))*1000)/1000;
+		coord[i][1] = round((coord[i][1] + BlockDist * sin(coord[i][2]))*1000)/1000;
+		if (coord[i][2] < 0) {
+			coord[i][2] = coord[i][2] + 3.14;
+		}
+		else {
+			coord[i][2] = coord[i][2] - 3.14;
+		}
 		cout << i << " x: " << coord[i][0] << " y: " << coord[i][1] << " z: " << coord[i][2] << endl;
 	}
 	
-	imageTransporter imgTransport("camera/image/", sensor_msgs::image_encodings::BGR8); // For Webcam
-	//imageTransporter imgTransport("camera/image/", sensor_msgs::image_encodings::BGR8); // THIS LINE MAY BE WRONG< CHECK MANUAL For Kinect
-
+	//imageTransporter imgTransport("camera/image/", sensor_msgs::image_encodings::BGR8); // For Webcam
+	imageTransporter imgTransport("camera/rgb/image_raw", sensor_msgs::image_encodings::BGR8); //For Kinect
 	
-
+	
 	while(ros::ok()){
 		ros::spinOnce();
-  	// 	//.....**E-STOP DO NOT TOUCH**.......
-   	// 	eStop.block();
-	// 	//...................................
+  	 	//.....**E-STOP DO NOT TOUCH**.......
+   	 	eStop.block();
+	 	//...................................
 
-	// 	//fill with your code
-	// 	//moveToGoal(	-3.518, 2.511, -0.73);
-		printf("REACH1\n");
-		findPic(imgTransport, imgs_track);
-		printf("REACH2\n");
+	 	//fill with your code
+	 	//moveToGoal(	-3.518, 2.511, -0.73);
+		//  findPic(imgTransport, imgs_track);
+		 
+
+		int i,j; //create coordinate array
+		std::vector<std::vector<float> > coordinates(6, std::vector<float>(3,0));
+		
+		for(i=0; i<5; i++){
+			for(j=0; j<3; j++){
+				coordinates[i][j] = coord[i][j];
+			}
+		}
+		coordinates[5][0] = x;
+		coordinates[5][1] = y; 
+		coordinates[5][3] = phi;
+		//coordinates[5][0] = 0;
+		//coordinates[5][1] = 0;
+		//coordinates[5][3] = 0;
+
+		
+		std::vector<std::vector<float> > path (6, std::vector<float>(3,0));
+		path = find_path(coordinates);
+		
+		for(i=0; i<5; i++){
+			for(j=0; j<3; j++){
+				printf("%f ",path[i][j]);
+			}
+			printf ("\n");
+		}
+		
+		for(i=4; i>=0; i--){
+			ros::spinOnce();
+			printf("Going to location: %d\n", i);
+			moveToGoal(path[i][0], path[i][1], path[i][2]); // Moves robot to next goal
+			printf("Check error 0\n");
+			findPic(imgTransport, imgs_track, i);
+			printf("Check error 7\n");
+		}
 	}
+
 	return 0;
 }
