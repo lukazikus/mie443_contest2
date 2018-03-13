@@ -17,20 +17,23 @@ namespace patch
 }
 
 
-int findPic(imageTransporter& imgTransport, vector<cv::Mat>& imgs_track, int iteration){
+// int findPic(imageTransporter& imgTransport, vector<cv::Mat>& imgs_track, int iteration){
+int findPic(cv::Mat& imgTransport, cv::Mat& imgs_track, int iteration){
   cv::namedWindow("view");
   int foundPic;
   // char imgname[50];
   printf("Check error 1\n");
   cv::Mat video;
 
-  video = imgTransport.getImg();
+  // video = imgTransport.getImg(); // For actual function
+  video = imgTransport; // Only for debugging
   printf("Check error 2\n");  
   if(!video.empty()){
     printf("Check error 3\n");
-	  //fill with your code
-	  //feature2D_homography("/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics/tag1.jpg", "/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics/tag3.jpg");
-    //feature2D_homography(imgs_track.at(1), video);
+	  // fill with your code
+	  // feature2D_homography("/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics/tag1.jpg", "/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics/tag3.jpg");
+    // feature2D_homography(imgs_track.at(1), video);
+    feature2D_homography(imgs_track, video);
     cv::imshow("view", video);
     // sprintf(imgname, "/home/turtlebot/catkin_ws/src/mie443_contest2/src/tag%d.jpg", iteration);
     printf("Check error 4\n");
@@ -48,8 +51,8 @@ int findPic(imageTransporter& imgTransport, vector<cv::Mat>& imgs_track, int ite
 /** @function main */
 int feature2D_homography (cv::Mat img_object, cv::Mat img_scene )//(const char *image1, const char *image2 )
 {
-  //Mat img_object = imread( image1, IMREAD_GRAYSCALE );
-  //Mat img_scene = imread( image2, IMREAD_GRAYSCALE );
+  // Mat img_object = imread( image1, IMREAD_GRAYSCALE );
+  // Mat img_scene = imread( image2, IMREAD_GRAYSCALE );
 
   if( !img_object.data || !img_scene.data )
   { std::cout<< " --(!) Error reading images " << std::endl; return -1; }
@@ -137,8 +140,12 @@ int feature2D_homography (cv::Mat img_object, cv::Mat img_scene )//(const char *
   line( img_matches, scene_corners[2] + Point2f( img_object.cols, 0), scene_corners[3] + Point2f( img_object.cols, 0), Scalar( 0, 255, 0), 4 );
   line( img_matches, scene_corners[3] + Point2f( img_object.cols, 0), scene_corners[0] + Point2f( img_object.cols, 0), Scalar( 0, 255, 0), 4 );
 
+  Mat scene_transformed;
+  warpPerspective(img_scene, scene_transformed, H, scene_transformed.size());
+  
   //-- Show detected matches
   imshow( "Good Matches & Object detection", img_matches );
+  imshow( "Warped Scene to Object", scene_transformed );
 
   waitKey(10);
   return 0;

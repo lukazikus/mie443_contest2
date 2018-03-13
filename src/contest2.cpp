@@ -5,6 +5,8 @@
 #include <math.h>
 
 #include <eStop.h>
+using namespace cv;
+using namespace cv::xfeatures2d;
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
@@ -137,19 +139,23 @@ int main(int argc, char** argv){
 	}
 	
 	//imageTransporter imgTransport("camera/image/", sensor_msgs::image_encodings::BGR8); // For Webcam
-	imageTransporter imgTransport("camera/rgb/image_raw", sensor_msgs::image_encodings::BGR8); //For Kinect
-	
+	ROS_INFO("before line\n");
+	// imageTransporter imgTransport("camera/rgb/image_raw", sensor_msgs::image_encodings::BGR8); //For Kinect UNCOMMENT
+	ROS_INFO("after line\n");
 	
 	while(ros::ok()){
+		ROS_INFO("HI\n");
 		ros::spinOnce();
   	 	//.....**E-STOP DO NOT TOUCH**.......
    	 	eStop.block();
 	 	//...................................
 
 	 	//fill with your code
-	 	//moveToGoal(	-3.518, 2.511, -0.73);
-		//  findPic(imgTransport, imgs_track);
+		//moveToGoal(	-3.518, 2.511, -0.73);
 		 
+		Mat imgTransport = imread( "/home/turtlebot/catkin_ws/src/mie443_contest2/pics/tag1.jpg", IMREAD_GRAYSCALE );
+		Mat imgs_track = imread( "/home/turtlebot/catkin_ws/src/mie443_contest2/src/tuesdayimage_latest/tag0.jpg", IMREAD_GRAYSCALE );
+		findPic(imgTransport, imgs_track, 1);
 
 		int i,j; //create coordinate array
 		std::vector<std::vector<float> > coordinates(6, std::vector<float>(3,0));
@@ -159,7 +165,7 @@ int main(int argc, char** argv){
 				coordinates[i][j] = coord[i][j];
 			}
 		}
-		coordinates[5][0] = x;
+		coordinates[5][0] = x;	
 		coordinates[5][1] = y; 
 		coordinates[5][3] = phi;
 		//coordinates[5][0] = 0;
