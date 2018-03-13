@@ -120,7 +120,7 @@ int main(int argc, char** argv){
 	
 	vector<vector<float> > coord;
 	vector<cv::Mat> imgs_track;	// Three images we want to match to
-	float BlockDist = 0.8;
+	float BlockDist = 0.7;
 
 	if(!init(coord, imgs_track)) return 0;
 
@@ -182,9 +182,11 @@ int main(int argc, char** argv){
 			printf("Going to location: %d\n", i);
 			moveToGoal(path[i][0], path[i][1], path[i][2]); // Moves robot to next goal
 			printf("Check error 0\n");
+			ros::spinOnce();
 			findPic(imgTransport, imgs_track, i);
 			printf("Check error 7\n");
 		}
+		break;
 	}
 
 	return 0;

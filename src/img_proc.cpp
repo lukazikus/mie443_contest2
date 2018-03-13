@@ -30,7 +30,7 @@ int findPic(imageTransporter& imgTransport, vector<cv::Mat>& imgs_track, int ite
     printf("Check error 3\n");
 	  //fill with your code
 	  //feature2D_homography("/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics/tag1.jpg", "/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics/tag3.jpg");
-    // feature2D_homography(imgs_track.at(1), video);
+    //feature2D_homography(imgs_track.at(1), video);
     cv::imshow("view", video);
     // sprintf(imgname, "/home/turtlebot/catkin_ws/src/mie443_contest2/src/tag%d.jpg", iteration);
     printf("Check error 4\n");
