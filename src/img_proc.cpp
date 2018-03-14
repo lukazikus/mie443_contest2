@@ -33,11 +33,11 @@ int findPic(cv::Mat& imgTransport, cv::Mat& imgs_track, int iteration){
 	  // fill with your code
 	  // feature2D_homography("/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics/tag1.jpg", "/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics/tag3.jpg");
     // feature2D_homography(imgs_track.at(1), video);
-    feature2D_homography(imgs_track, video);
+    feature2D_homography(video, imgs_track);
     cv::imshow("view", video);
     // sprintf(imgname, "/home/turtlebot/catkin_ws/src/mie443_contest2/src/tag%d.jpg", iteration);
     printf("Check error 4\n");
-    cv::imwrite("/home/turtlebot/catkin_ws/src/mie443_contest2/src/tag"+ patch::to_string(iteration) +".jpg", video);
+    cv::imwrite("/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/src/tag"+ patch::to_string(iteration) +".jpg", video); // CHANGE IMAGE PATH
     cv::waitKey(10);
     video.release();
     cv::waitKey(10);
@@ -124,7 +124,7 @@ int feature2D_homography (cv::Mat img_object, cv::Mat img_scene )//(const char *
     scene.push_back( keypoints_scene[ good_matches[i].trainIdx ].pt );
   }
 
-  Mat H = findHomography( obj, scene, RANSAC );
+  Mat H = findHomography( scene, obj, RANSAC ); // Find transformation from object to scene
 
   //-- Get the corners from the image_1 ( the object to be "detected" )
   std::vector<Point2f> obj_corners(4);
@@ -141,7 +141,8 @@ int feature2D_homography (cv::Mat img_object, cv::Mat img_scene )//(const char *
   line( img_matches, scene_corners[3] + Point2f( img_object.cols, 0), scene_corners[0] + Point2f( img_object.cols, 0), Scalar( 0, 255, 0), 4 );
 
   Mat scene_transformed;
-  warpPerspective(img_scene, scene_transformed, H, scene_transformed.size());
+  warpPerspective(img_scene, scene_transformed, H, img_object.size()); // Warp scene image to zoom into object portion
+  cv::imwrite("/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/src/tag_from_scene.jpg", scene_transformed); // CHANGE IMAGE PATH
   
   //-- Show detected matches
   imshow( "Good Matches & Object detection", img_matches );

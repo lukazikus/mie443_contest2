@@ -153,8 +153,8 @@ int main(int argc, char** argv){
 	 	//fill with your code
 		//moveToGoal(	-3.518, 2.511, -0.73);
 		 
-		Mat imgTransport = imread( "/home/turtlebot/catkin_ws/src/mie443_contest2/pics/tag1.jpg", IMREAD_GRAYSCALE );
-		Mat imgs_track = imread( "/home/turtlebot/catkin_ws/src/mie443_contest2/src/tuesdayimage_latest/tag0.jpg", IMREAD_GRAYSCALE );
+		Mat imgTransport = imread( "/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics/tag1.jpg", IMREAD_GRAYSCALE );
+		Mat imgs_track = imread( "/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/src/tuesdayimage_latest/tag0.jpg", IMREAD_GRAYSCALE );
 		findPic(imgTransport, imgs_track, 1);
 
 		int i,j; //create coordinate array
