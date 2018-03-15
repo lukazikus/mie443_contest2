@@ -123,6 +123,10 @@ int main(int argc, char** argv){
 	vector<vector<float> > coord;
 	vector<cv::Mat> imgs_track;	// Three images we want to match to
 	float BlockDist = 0.7;
+	bool raisinRep, riceRep, roastRep; // Duplicate flags for each cereal type
+	raisinRep = false;
+	riceRep = false;
+	roastRep = false;
 
 	if(!init(coord, imgs_track)) return 0;
 
@@ -158,10 +162,11 @@ int main(int argc, char** argv){
 		//Simulation: pretend it to be video feed
 		//Mat imgTransport;// = imread( "/home/andrew/catkin_ws/src/mie443_contest2/src/tuesdayimage_latest/tag4.jpg", IMREAD_GRAYSCALE );
 
-		foundPic = findPic(imgTransport, imgs_track, 1);//1:raisin bran, 2: cinnimen roast crunch, 3: rice krispies, 4:blank image
+		// foundPic = findPic(imgTransport, imgs_track, 1);//1:raisin bran, 2: cinnimen roast crunch, 3: rice krispies, 4:blank image
 
 		//remove this line!!!
 		//break;
+		// continue;
 
 		int i,j; //create coordinate array
 		std::vector<std::vector<float> > coordinates(6, std::vector<float>(3,0));
@@ -191,26 +196,47 @@ int main(int argc, char** argv){
 		}
 		
 		std::vector<int> box_sequence(5);
+		for (i = 0; i < 5; i++){
+			box_sequence.at(i) = 0;
+		}
 		for(i=4; i>=0; i--){
 			ros::spinOnce();
 			printf("Going to location: %d\n", i);
 			moveToGoal(path[i][0], path[i][1], path[i][2]); // Moves robot to next goal
 			ros::spinOnce();
-			foundPic = findPic(imgTransport, imgs_track, i);//1:raisin bran, 2: cinnimen roast crunch, 3: rice krispies, 4:blank image
-			box_sequence[i] = foundPic;
+			foundPic = findPic(imgTransport, imgs_track, i); //1:raisin bran, 2: cinnimen roast crunch, 3: rice krispies, 4:blank image
+			box_sequence.at(i) = foundPic;
 		}
 		for(i=4; i>=0; i--){
-			if (box_sequence[i] == 1){
-				printf("%d: Raisin Bran\n", i);
-			}else if (box_sequence[i] == 2){
-				printf("%d: Cinnamon Toast Crunch\n", i);
-			}else if (box_sequence[i] == 3){
-				printf("%d: Rice Krispies\n", i);
-			}else if (box_sequence[i] == 4){
-				printf("%d: Blank Image\n", i);
-			}	
+			if (box_sequence.at(i) == 1){
+				if(!raisinRep){
+					printf("Location %d: Raisin Bran\n", i+1);
+				}else{
+					printf("Location %d: Raisin Bran (duplicate)\n", i+1);
+				}
+				raisinRep = true;
+			}else if (box_sequence.at(i) == 2){
+				if(!roastRep){
+					printf("Location %d: Cinnamon Toast Crunch\n", i+1);
+				}else{
+					printf("Location %d: Cinnamon Toast Crunch (duplicate)\n", i+1);
+				}
+				roastRep = true;
+			}else if (box_sequence.at(i) == 3){
+				if(!riceRep){
+					printf("Location %d: Rice Krispies\n", i+1);
+				}else{
+					printf("Location %d: Rice Krispies (duplicate)\n", i+1);
+				}
+				riceRep = true;
+			}else if (box_sequence.at(i) == 4){
+				printf("Location %d: Blank Image\n", i+1);
+			}else{
+				printf("Error\n");
+			}
 		}
-
+		
+		moveToGoal(coordinates[5][0], coordinates[5][1], coordinates[5][2]);
 		break;
 	}
 
