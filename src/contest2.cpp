@@ -139,10 +139,10 @@ int main(int argc, char** argv){
 	}
 	
 	//imageTransporter imgTransport("camera/image/", sensor_msgs::image_encodings::BGR8); // For Webcam
-	ROS_INFO("before line\n");
-	// imageTransporter imgTransport("camera/rgb/image_raw", sensor_msgs::image_encodings::BGR8); //For Kinect UNCOMMENT
-	ROS_INFO("after line\n");
+	imageTransporter imgTransport("camera/rgb/image_raw", sensor_msgs::image_encodings::BGR8); //For Kinect UNCOMMENT
 	
+	int foundPic = 0;
+
 	while(ros::ok()){
 		ROS_INFO("HI\n");
 		ros::spinOnce();
@@ -151,11 +151,17 @@ int main(int argc, char** argv){
 	 	//...................................
 
 	 	//fill with your code
-		//moveToGoal(	-3.518, 2.511, -0.73);
-		 
-		Mat imgTransport = imread( "/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/pics/tag1.jpg", IMREAD_GRAYSCALE );
-		Mat imgs_track = imread( "/home/lucasius/MIE443/catkin_ws/src/mie443_contest2/src/tuesdayimage_latest/tag0.jpg", IMREAD_GRAYSCALE );
-		findPic(imgTransport, imgs_track, 1);
+		
+		//change address*******************************************************************************************
+		Mat imgs_track;// = imread( "/home/andrew/catkin_ws/src/mie443_contest2/pics/tag1.jpg", IMREAD_GRAYSCALE );
+
+		//Simulation: pretend it to be video feed
+		//Mat imgTransport;// = imread( "/home/andrew/catkin_ws/src/mie443_contest2/src/tuesdayimage_latest/tag4.jpg", IMREAD_GRAYSCALE );
+
+		foundPic = findPic(imgTransport, imgs_track, 1);//1:raisin bran, 2: cinnimen roast crunch, 3: rice krispies, 4:blank image
+
+		//remove this line!!!
+		//break;
 
 		int i,j; //create coordinate array
 		std::vector<std::vector<float> > coordinates(6, std::vector<float>(3,0));
@@ -168,30 +174,43 @@ int main(int argc, char** argv){
 		coordinates[5][0] = x;	
 		coordinates[5][1] = y; 
 		coordinates[5][3] = phi;
-		//coordinates[5][0] = 0;
-		//coordinates[5][1] = 0;
-		//coordinates[5][3] = 0;
 
 		
 		std::vector<std::vector<float> > path (6, std::vector<float>(3,0));
 		path = find_path(coordinates);
 		
+		//REMOVE this line!!! Add this line for testing image processing purpose
+		//continue;
+
 		for(i=0; i<5; i++){
+
 			for(j=0; j<3; j++){
 				printf("%f ",path[i][j]);
 			}
 			printf ("\n");
 		}
 		
+		std::vector<int> box_sequence(5);
 		for(i=4; i>=0; i--){
 			ros::spinOnce();
 			printf("Going to location: %d\n", i);
 			moveToGoal(path[i][0], path[i][1], path[i][2]); // Moves robot to next goal
-			printf("Check error 0\n");
 			ros::spinOnce();
-			findPic(imgTransport, imgs_track, i);
-			printf("Check error 7\n");
+			foundPic = findPic(imgTransport, imgs_track, i);//1:raisin bran, 2: cinnimen roast crunch, 3: rice krispies, 4:blank image
+			box_sequence[i] = foundPic;
 		}
+		for(i=4; i>=0; i--){
+			if (box_sequence[i] == 1){
+				printf("%d: Raisin Bran\n", i);
+			}else if (box_sequence[i] == 2){
+				printf("%d: Cinnamon Toast Crunch\n", i);
+			}else if (box_sequence[i] == 3){
+				printf("%d: Rice Krispies\n", i);
+			}else if (box_sequence[i] == 4){
+				printf("%d: Blank Image\n", i);
+			}	
+		}
+
 		break;
 	}
 
