@@ -89,7 +89,7 @@ int findPic(imageTransporter &imgTransport, cv::Mat &imgs_track, int iteration){
     //cv::imwrite("image_bw.jpg", imgs_bw);
 
     printf("SSD1: %lf, %lf, %lf\n", SSD1, SSD2, SSD3);
-    double error_threshold = 0.285;
+    double error_threshold = 0.292;
 
     if ((SSD1 > 0 && SSD2 > 0 && SSD3 > 0)&& SSD1 < error_threshold || SSD2 < error_threshold || SSD3 < error_threshold){
       if (SSD1 < error_threshold && SSD1 == min(SSD1, min(SSD2, SSD3))){
