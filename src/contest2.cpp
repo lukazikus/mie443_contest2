@@ -210,27 +210,27 @@ int main(int argc, char** argv){
 		for(i=4; i>=0; i--){
 			if (box_sequence.at(i) == 1){
 				if(!raisinRep){
-					printf("Location %d: Raisin Bran\n", i+1);
+					printf("Location %d: Raisin Bran\n", 5-i);
 				}else{
-					printf("Location %d: Raisin Bran (duplicate)\n", i+1);
+					printf("Location %d: Raisin Bran (duplicate)\n", 5-i);
 				}
 				raisinRep = true;
 			}else if (box_sequence.at(i) == 2){
 				if(!roastRep){
-					printf("Location %d: Cinnamon Toast Crunch\n", i+1);
+					printf("Location %d: Cinnamon Toast Crunch\n", 5-i);
 				}else{
-					printf("Location %d: Cinnamon Toast Crunch (duplicate)\n", i+1);
+					printf("Location %d: Cinnamon Toast Crunch (duplicate)\n", 5-i);
 				}
 				roastRep = true;
 			}else if (box_sequence.at(i) == 3){
 				if(!riceRep){
-					printf("Location %d: Rice Krispies\n", i+1);
+					printf("Location %d: Rice Krispies\n", 5-i);
 				}else{
-					printf("Location %d: Rice Krispies (duplicate)\n", i+1);
+					printf("Location %d: Rice Krispies (duplicate)\n", 5-i);
 				}
 				riceRep = true;
 			}else if (box_sequence.at(i) == 4){
-				printf("Location %d: Blank Image\n", i+1);
+				printf("Location %d: Blank Image\n", 5-i);
 			}else{
 				printf("Error\n");
 			}
